@@ -1,6 +1,8 @@
 package io.dropwizard.auth;
 
 
+import java.security.Principal;
+
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -10,7 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
 
 @Path("/test/")
 @Produces(MediaType.TEXT_PLAIN)
@@ -20,6 +21,13 @@ public class AuthResource {
     public String show(@Context SecurityContext securityContext) {
         Principal principal = securityContext.getUserPrincipal();
         return principal.getName();
+    }
+
+    @RolesAllowed({"ADMIN"})
+    @GET
+    @Path("fail")
+    public String thisFails(@Context SecurityContext securityContext) {
+        throw new RuntimeException("My exception message");
     }
 
     @PermitAll
